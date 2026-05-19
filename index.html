@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>農薬検索</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <h1>🌱 農薬検索</h1>
+      <p class="subtitle">農薬名・作物・病害虫から探す</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="search-panel" aria-label="検索条件">
+      <div class="search-row">
+        <div class="field name-field">
+          <label for="q-name">農薬名 / 有効成分 / 登録番号</label>
+          <input
+            type="search"
+            id="q-name"
+            placeholder="例: スミチオン / イミダクロプリド / 第18371号"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="field">
+          <label for="q-crop">対象作物</label>
+          <select id="q-crop">
+            <option value="">すべての作物</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="q-pest">病害虫・雑草</label>
+          <select id="q-pest">
+            <option value="">すべて</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="search-row chips-row">
+        <div class="chips-group" role="group" aria-label="農薬の種類">
+          <button class="chip active" data-type="">すべて</button>
+          <button class="chip" data-type="殺虫剤">🐛 殺虫剤</button>
+          <button class="chip" data-type="殺菌剤">🍄 殺菌剤</button>
+          <button class="chip" data-type="除草剤">🌾 除草剤</button>
+        </div>
+        <button id="btn-reset" type="button" class="reset-btn">条件をリセット</button>
+      </div>
+
+      <div class="examples">
+        <span class="examples-label">よく使う検索:</span>
+        <button class="example" data-crop="キャベツ" data-pest="コナガ">キャベツのコナガ</button>
+        <button class="example" data-crop="トマト" data-pest="疫病">トマトの疫病</button>
+        <button class="example" data-crop="稲" data-pest="いもち病">稲のいもち病</button>
+        <button class="example" data-crop="りんご" data-pest="うどんこ病">りんごのうどんこ病</button>
+        <button class="example" data-crop="いちご" data-pest="ハダニ類">いちごのハダニ</button>
+      </div>
+    </section>
+
+    <section class="results" aria-live="polite">
+      <div class="results-header">
+        <span id="result-count" class="result-count">0 件</span>
+        <span class="data-source">
+          スキーマ:
+          <a href="https://www.acis.famic.go.jp/" target="_blank" rel="noopener">FAMIC 農薬登録情報</a>
+          / サンプルデータ
+        </span>
+      </div>
+      <ul id="result-list" class="result-list"></ul>
+      <div id="empty-state" class="empty-state" hidden>
+        <p class="empty-title">該当する農薬が見つかりませんでした</p>
+        <p class="empty-hint">検索条件を緩めるか、上のチップから例を試してください。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>※ 本アプリは学習用です。実際の防除には<a href="https://www.acis.famic.go.jp/" target="_blank" rel="noopener">公式の最新登録情報</a>とラベルを必ず確認してください。</p>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
