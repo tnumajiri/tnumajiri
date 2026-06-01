@@ -1,5 +1,5 @@
 /* 希釈計算機 Service Worker — オフライン対応 */
-const CACHE = "kishaku-v1";
+const CACHE = "kishaku-v2";
 const ASSETS = [
   "./",
   "./index.html",

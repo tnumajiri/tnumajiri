@@ -143,6 +143,24 @@
   }
   .seg button[aria-pressed="true"] { background: var(--brand); color: #fff; }
 
+  /* 単位セレクト（面積） */
+  .unitselect {
+    flex: 0 0 auto;
+    border: 1.5px solid var(--line);
+    background: var(--field);
+    color: var(--text);
+    border-radius: 12px;
+    font-size: 16px; font-weight: 700;
+    padding: 0 34px 0 14px;
+    min-width: 76px;
+    cursor: pointer;
+    -webkit-appearance: none; appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%236b7d77' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+  }
+  .unitselect:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+
   .result {
     margin-top: 18px;
     background: var(--brand-soft);
@@ -337,10 +355,17 @@
         <div class="inputrow">
           <div class="inputwrap">
             <input id="s_area" type="number" inputmode="decimal" placeholder="0" min="0" step="any">
-            <span class="unit">10a（反）</span>
           </div>
+          <select id="s_areaunit" class="unitselect" aria-label="面積の単位">
+            <option value="1" selected>反</option>
+            <option value="1">10a</option>
+            <option value="0.1">a</option>
+            <option value="10">町</option>
+            <option value="10">ha</option>
+            <option value="0.001">㎡</option>
+          </select>
         </div>
-        <div class="note">※ 1反 = 10a = 1000㎡。例）3反なら「3」と入力。</div>
+        <div class="note">※ 1反 = 10a。1町 = 10反 = 1ha = 100a。散布量は「10aあたり」で入力します。</div>
       </div>
 
       <div class="field">
@@ -513,18 +538,20 @@
       setResult("d_result", true, fmt(dose) + '<span class="u">g（≒mL）</span>', "必要な薬剤量");
     })();
 
-    // 散布（面積）： 総液量 = 面積×散布量 / 薬剤量 = 総液量(mL)/倍率
+    // 散布（面積）： 総液量 = 面積(10a換算)×散布量 / 薬剤量 = 総液量(mL)/倍率
     (function () {
       var area = val("s_area"), rate = val("s_rate"), x = val("s_factor");
+      var unitFactor = parseFloat(document.getElementById("s_areaunit").value); // 10a換算係数
       if (isNaN(area) || isNaN(rate) || isNaN(x) || area <= 0 || rate <= 0 || x <= 0) {
         setResult("s_result", false, "値を入力してください", "必要な薬剤量");
         return;
       }
       var w = factorWarn(x);
       if (w) { setResult("s_result", false, w, "必要な薬剤量"); return; }
-      var totalL = area * rate;        // 総液量(L)
-      var dose = (totalL * 1000) / x;  // 薬剤量(g≒mL)
-      var sub = "総液量 <b>" + fmt(totalL) + " L</b>";
+      var area10a = area * unitFactor;  // 面積を「10a単位」に換算
+      var totalL = area10a * rate;      // 総液量(L)
+      var dose = (totalL * 1000) / x;   // 薬剤量(g≒mL)
+      var sub = "総液量 <b>" + fmt(totalL) + " L</b>（面積 " + fmt(area10a * 10) + " a）";
       if (dose >= 1000) sub += "（薬剤 ≒ " + fmt(dose / 1000) + " kg）";
       setResult("s_result", true, fmt(dose) + '<span class="u">g（≒mL）</span>', "必要な薬剤量", sub);
     })();
@@ -534,6 +561,7 @@
   document.querySelectorAll('input[type="number"]').forEach(function (inp) {
     inp.addEventListener("input", recalc);
   });
+  document.getElementById("s_areaunit").addEventListener("change", recalc);
   recalc();
 
   // ---- Service Worker 登録（PWA / オフライン）----
