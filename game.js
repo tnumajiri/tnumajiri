@@ -53,12 +53,62 @@ window.addEventListener('keyup', e => {
 });
 const pressed = k => keys[k] && !prevKeys[k];
 
+// --- touch controls (iPad / smartphone) ---
+// The d-pad tracks every active touch over the pad area so the thumb can
+// slide between left and right without lifting.
+function bindTouch() {
+  const el = id => {
+    const e = document.getElementById(id);
+    return (e && e.addEventListener) ? e : null; // absent in headless tests
+  };
+  const pad = el('pad');
+  if (pad) {
+    const update = e => {
+      e.preventDefault();
+      initAudio();
+      const rect = pad.getBoundingClientRect();
+      let l = false, r = false;
+      for (const t of e.touches) {
+        if (t.clientX >= rect.left - 24 && t.clientX <= rect.right + 24 &&
+            t.clientY >= rect.top - 40 && t.clientY <= rect.bottom + 40) {
+          if (t.clientX < rect.left + rect.width / 2) l = true; else r = true;
+        }
+      }
+      keys.left = l; keys.right = r;
+    };
+    for (const ev of ['touchstart', 'touchmove', 'touchend', 'touchcancel'])
+      pad.addEventListener(ev, update, { passive: false });
+  }
+  const bindBtn = (id, fn) => {
+    const b = el(id);
+    if (!b) return;
+    const on = e => { e.preventDefault(); initAudio(); fn(true); };
+    const off = e => { e.preventDefault(); fn(false); };
+    b.addEventListener('touchstart', on, { passive: false });
+    b.addEventListener('touchend', off);
+    b.addEventListener('touchcancel', off);
+    b.addEventListener('mousedown', on);
+    b.addEventListener('mouseup', off);
+    b.addEventListener('mouseleave', off);
+  };
+  bindBtn('btnA', d => { keys.jump = d; });
+  bindBtn('btnB', d => { keys.run = d; });
+  bindBtn('btnStart', d => { keys.start = d; });
+  bindBtn('btnMute', d => { if (d) toggleMute(); });
+}
+bindTouch();
+
 // ------------------------------------------------------------------ audio --
 let actx = null, muted = false, masterGain = null;
 let musicNextLoop = 0, musicOn = false;
 
 function initAudio() {
-  if (actx || typeof AudioContext === 'undefined') return;
+  if (typeof AudioContext === 'undefined') return;
+  if (actx) {
+    // iOS Safari suspends the context until a user gesture
+    if (actx.state === 'suspended' && actx.resume) actx.resume();
+    return;
+  }
   try {
     actx = new AudioContext();
     masterGain = actx.createGain();
