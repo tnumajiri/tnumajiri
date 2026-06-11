@@ -1,0 +1,14 @@
+# Render Blueprint — カロリー手帳のデプロイ設定
+# Render の「New → Blueprint」でこのリポジトリを選ぶと自動で読み込まれます
+services:
+  - type: web
+    name: karori-techo
+    runtime: node
+    plan: free
+    rootDir: calorie-app
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false # デプロイ時に自分のAPIキーを入力する

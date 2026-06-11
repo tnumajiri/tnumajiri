@@ -31,6 +31,18 @@ npm start
 
 ブラウザで http://localhost:3000 を開きます。スマートフォンからは同一ネットワーク内のPCのIPアドレスでアクセスするとカメラ撮影が使えます。
 
+## ☁️ Render にデプロイ(スマホからいつでも使う)
+
+リポジトリ直下の `render.yaml` で [Render](https://render.com) の無料プランにデプロイできます。
+
+1. [render.com](https://render.com) でアカウント作成(GitHub連携でログイン)
+2. ダッシュボードで **New → Blueprint** を選択
+3. このリポジトリ(`tnumajiri/tnumajiri`)を接続し、ブランチを選択
+4. `ANTHROPIC_API_KEY` の入力を求められるので、自分のAPIキーを貼り付け
+5. **Apply** を押すと数分でデプロイ完了。発行された `https://karori-techo-xxxx.onrender.com` のURLをスマホのホーム画面に追加すれば、アプリのように使えます
+
+> 💡 無料プランは15分間アクセスがないとスリープし、次のアクセス時の起動に1分ほどかかります。記録データは端末のブラウザに保存されるため、サーバーがスリープしても消えません。
+
 ## 🏗 構成
 
 ```
