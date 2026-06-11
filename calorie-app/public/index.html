@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#FAF6EF">
+<title>カロリー手帳 — 写真で記録、自動でカロリー計算</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Shippori+Mincho:wght@600;800&family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥗</text></svg>">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ヘッダー -->
+  <header class="header">
+    <div class="brand">
+      <span class="brand-mark">🥗</span>
+      <div>
+        <h1>カロリー手帳</h1>
+        <p class="brand-sub">photo &amp; recipe calorie diary</p>
+      </div>
+    </div>
+    <button class="icon-btn" id="settingsBtn" aria-label="設定">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.12-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.56-1.03H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.56-1.12 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34h.01A1.7 1.7 0 0 0 10 4.09V4a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87v.01c.26.63.87 1.04 1.56 1.04H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51.94Z"/></svg>
+    </button>
+  </header>
+
+  <!-- 日付ナビ -->
+  <nav class="date-nav">
+    <button class="icon-btn" id="prevDay" aria-label="前の日">‹</button>
+    <button class="date-label" id="dateLabel">今日</button>
+    <button class="icon-btn" id="nextDay" aria-label="次の日">›</button>
+  </nav>
+
+  <!-- 日次サマリー -->
+  <section class="card hero">
+    <div class="ring-wrap">
+      <svg class="ring" viewBox="0 0 200 200">
+        <defs>
+          <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#5C8A4E"/>
+            <stop offset="100%" stop-color="#9BBF3B"/>
+          </linearGradient>
+          <linearGradient id="ringGradOver" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#E8704A"/>
+            <stop offset="100%" stop-color="#D94F30"/>
+          </linearGradient>
+        </defs>
+        <circle class="ring-bg" cx="100" cy="100" r="84"/>
+        <circle class="ring-fg" id="ringFg" cx="100" cy="100" r="84"/>
+      </svg>
+      <div class="ring-center">
+        <div class="ring-kcal" id="ringKcal">0</div>
+        <div class="ring-unit">kcal 摂取</div>
+        <div class="ring-status" id="ringStatus">目標まで 0 kcal</div>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-label">目標</span>
+        <span class="stat-value" id="statGoal">—</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">摂取</span>
+        <span class="stat-value" id="statIntake">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">収支</span>
+        <span class="stat-value" id="statBalance">0</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PFC -->
+  <section class="card">
+    <h2 class="card-title">栄養バランス <span class="card-title-sub">PFC</span></h2>
+    <div class="macro" id="macroP">
+      <div class="macro-head"><span>たんぱく質</span><span class="macro-val">0 g</span></div>
+      <div class="bar"><div class="bar-fill p"></div></div>
+    </div>
+    <div class="macro" id="macroF">
+      <div class="macro-head"><span>脂質</span><span class="macro-val">0 g</span></div>
+      <div class="bar"><div class="bar-fill f"></div></div>
+    </div>
+    <div class="macro" id="macroC">
+      <div class="macro-head"><span>炭水化物</span><span class="macro-val">0 g</span></div>
+      <div class="bar"><div class="bar-fill c"></div></div>
+    </div>
+  </section>
+
+  <!-- 週間チャート -->
+  <section class="card">
+    <h2 class="card-title">この1週間 <span class="card-title-sub" id="weekBalance"></span></h2>
+    <div class="week-chart" id="weekChart"></div>
+  </section>
+
+  <!-- 食事リスト -->
+  <section class="card">
+    <h2 class="card-title">食事の記録</h2>
+    <ul class="meal-list" id="mealList"></ul>
+    <p class="empty" id="mealEmpty">まだ記録がありません。<br>下のボタンから食事を追加しましょう 🍚</p>
+  </section>
+
+  <div class="footer-space"></div>
+</div>
+
+<!-- 追加アクションバー -->
+<div class="action-bar">
+  <button class="action-btn" data-add="photo">
+    <span class="action-icon">📷</span>写真で記録
+  </button>
+  <button class="action-btn" data-add="recipe">
+    <span class="action-icon">🔗</span>レシピURL
+  </button>
+  <button class="action-btn" data-add="manual">
+    <span class="action-icon">✏️</span>手入力
+  </button>
+</div>
+
+<!-- 追加モーダル -->
+<div class="modal" id="addModal" hidden>
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3 id="addTitle">食事を記録</h3>
+      <button class="icon-btn" data-close>✕</button>
+    </div>
+
+    <div class="tabs" id="addTabs">
+      <button class="tab" data-tab="photo">📷 写真</button>
+      <button class="tab" data-tab="recipe">🔗 URL</button>
+      <button class="tab" data-tab="manual">✏️ 手入力</button>
+    </div>
+
+    <!-- 写真タブ -->
+    <div class="tab-pane" data-pane="photo">
+      <label class="drop" id="photoDrop">
+        <input type="file" id="photoInput" accept="image/*" capture="environment" hidden>
+        <img id="photoPreview" alt="" hidden>
+        <div class="drop-hint" id="photoHint">
+          <span class="drop-icon">📸</span>
+          タップして撮影 / 写真を選択<br>
+          <small>コンビニのお弁当も、自炊のごはんもOK</small>
+        </div>
+      </label>
+      <input class="input" id="photoNote" type="text" placeholder="補足(任意)例: ご飯は大盛り、半分だけ食べた">
+      <button class="btn primary" id="analyzePhotoBtn" disabled>AIでカロリーを解析</button>
+    </div>
+
+    <!-- レシピURLタブ -->
+    <div class="tab-pane" data-pane="recipe" hidden>
+      <input class="input" id="recipeUrl" type="url" placeholder="https://… レシピサイトや動画のURL" inputmode="url">
+      <p class="hint-text">クックパッド・クラシル・YouTubeなど、再現したレシピのURLを貼ってください。1人前あたりで計算します。</p>
+      <input class="input" id="recipeNote" type="text" placeholder="補足(任意)例: 2人前作って半分食べた">
+      <button class="btn primary" id="analyzeRecipeBtn">AIでカロリーを解析</button>
+    </div>
+
+    <!-- 手入力タブ -->
+    <div class="tab-pane" data-pane="manual" hidden>
+      <input class="input" id="manualName" type="text" placeholder="食事名(例: おにぎり 鮭)">
+      <div class="grid4">
+        <label>kcal<input class="input" id="manualKcal" type="number" min="0" placeholder="0"></label>
+        <label>P (g)<input class="input" id="manualP" type="number" min="0" placeholder="0"></label>
+        <label>F (g)<input class="input" id="manualF" type="number" min="0" placeholder="0"></label>
+        <label>C (g)<input class="input" id="manualC" type="number" min="0" placeholder="0"></label>
+      </div>
+      <button class="btn primary" id="saveManualBtn">記録する</button>
+    </div>
+
+    <!-- 解析中 -->
+    <div class="analyzing" id="analyzing" hidden>
+      <div class="spinner"></div>
+      <p id="analyzingText">AIがカロリーを計算しています…</p>
+    </div>
+
+    <!-- 解析結果 -->
+    <div class="result" id="result" hidden>
+      <div class="result-head">
+        <span class="badge" id="resultConfidence"></span>
+        <span class="result-kcal"><b id="resultKcal">0</b> kcal</span>
+      </div>
+      <input class="input result-name" id="resultName" type="text">
+      <ul class="result-items" id="resultItems"></ul>
+      <p class="result-notes" id="resultNotes"></p>
+      <div class="grid4">
+        <label>kcal<input class="input" id="resKcalInput" type="number" min="0"></label>
+        <label>P (g)<input class="input" id="resPInput" type="number" min="0"></label>
+        <label>F (g)<input class="input" id="resFInput" type="number" min="0"></label>
+        <label>C (g)<input class="input" id="resCInput" type="number" min="0"></label>
+      </div>
+      <div class="row">
+        <button class="btn ghost" id="retryBtn">やり直す</button>
+        <button class="btn primary" id="saveResultBtn">この内容で記録</button>
+      </div>
+    </div>
+
+    <p class="error" id="addError" hidden></p>
+  </div>
+</div>
+
+<!-- 設定モーダル -->
+<div class="modal" id="settingsModal" hidden>
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3>目標設定</h3>
+      <button class="icon-btn" data-close>✕</button>
+    </div>
+
+    <label class="field-label">1日の目標摂取カロリー</label>
+    <div class="goal-row">
+      <input class="input goal-input" id="goalInput" type="number" min="500" max="6000" step="10">
+      <span>kcal</span>
+    </div>
+
+    <details class="calc">
+      <summary>目標カロリーを自動計算する</summary>
+      <div class="grid2">
+        <label>性別
+          <select class="input" id="calcSex">
+            <option value="male">男性</option>
+            <option value="female">女性</option>
+          </select>
+        </label>
+        <label>年齢<input class="input" id="calcAge" type="number" min="10" max="100" value="35"></label>
+        <label>身長 (cm)<input class="input" id="calcHeight" type="number" min="100" max="230" value="170"></label>
+        <label>体重 (kg)<input class="input" id="calcWeight" type="number" min="30" max="200" value="65"></label>
+      </div>
+      <label class="field-label">活動量
+        <select class="input" id="calcActivity">
+          <option value="1.2">ほぼ運動しない(デスクワーク中心)</option>
+          <option value="1.375" selected>軽い運動(週1〜3回)</option>
+          <option value="1.55">中程度の運動(週3〜5回)</option>
+          <option value="1.725">激しい運動(ほぼ毎日)</option>
+        </select>
+      </label>
+      <label class="field-label">目的
+        <select class="input" id="calcGoalType">
+          <option value="-500">減量(−500 kcal/日)</option>
+          <option value="-250">ゆるく減量(−250 kcal/日)</option>
+          <option value="0" selected>維持</option>
+          <option value="250">増量(+250 kcal/日)</option>
+        </select>
+      </label>
+      <button class="btn ghost" id="calcBtn">計算して目標に反映</button>
+      <p class="hint-text" id="calcResult"></p>
+    </details>
+
+    <button class="btn primary" id="saveSettingsBtn">保存する</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>

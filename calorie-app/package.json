@@ -1,0 +1,17 @@
+{
+  "name": "karori-techo",
+  "version": "1.0.0",
+  "description": "写真とレシピURLから自動でカロリー計算するカロリー手帳アプリ",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
+    "express": "^4.21.2"
+  }
+}
