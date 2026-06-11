@@ -67,6 +67,18 @@
     #touch{ display:flex; }
     #wrap{ width:min(100vw, calc((100dvh - 175px) * 256 / 240)); }
   }
+  /* narrow phones: shrink the controls so everything fits */
+  @media (max-width:540px){
+    #touch{ padding:8px 8px calc(12px + env(safe-area-inset-bottom)); gap:4px; }
+    .half{ width:58px; height:58px; font-size:22px; border-radius:10px; }
+    #pad{ gap:5px; }
+    #acts{ gap:8px; }
+    #acts .tbtn{ width:62px; height:62px; font-size:15px; }
+    #sysbtns{ gap:6px; }
+    #sysbtns .tbtn{ padding:5px 7px; font-size:9px; }
+    #wrap{ width:min(100vw, calc((100dvh - 130px) * 256 / 240)); }
+    h1{ display:none; }
+  }
 </style>
 </head>
 <body>
